@@ -1,0 +1,15 @@
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Pub2PDF.exe
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Pub2PDF.deps.json
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Pub2PDF.runtimeconfig.json
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Pub2PDF.runtimeconfig.dev.json
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Pub2PDF.dll
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Pub2PDF.pdb
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\bin\Release\netcoreapp3.1\Interop.Microsoft.Office.Interop.Publisher.dll
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Interop.Microsoft.Office.Interop.Publisher.dll
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.csproj.ResolveComReference.cache
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.AssemblyInfoInputs.cache
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.AssemblyInfo.cs
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.csproj.CoreCompileInputs.cache
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.dll
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.pdb
+C:\Users\Scott\OneDrive - NGK Spark Plugs (USA), Inc\Projects\Dev\VisualStudio\Pub2PDF\Pub2PDF\obj\Release\netcoreapp3.1\Pub2PDF.genruntimeconfig.cache
