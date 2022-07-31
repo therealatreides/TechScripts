@@ -12,8 +12,10 @@ Let me know if you have any issues using them, as there is always space for impr
 ## Donations
 To support this project, you can make a donation to the current maintainer:
 
-Paypal:
-[![paypal](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/paypal_btn_donateCC_LG_1.gif)](https://paypal.me/SRoyalty?country.x=US&locale.x=en_US)
+### Paypal:
 
-Cashapp: $MuadDibttv
-![cashapp](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/cashapp_qr.png)
+[![Paypal](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/paypal_btn_donateCC_LG_1.gif)](https://paypal.me/SRoyalty?country.x=US&locale.x=en_US)
+
+### Cashapp: $MuadDibttv
+
+![Cashapp](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/cashapp_qr.png)
