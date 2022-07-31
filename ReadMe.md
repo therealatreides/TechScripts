@@ -18,4 +18,4 @@ To support this project, you can make a donation to the current maintainer:
 
 ### Cashapp: $MuadDibttv
 
-![Cashapp](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/cashapp_qr.png)
+<img src="https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/cashapp_qr.png" alt="Cashapp QR for $MuadDibttv" width="265px">
