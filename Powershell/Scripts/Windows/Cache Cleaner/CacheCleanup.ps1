@@ -3,9 +3,17 @@
     This script will clear cache locations across the Windows install in order to clean up the PC.
     This is ran across all users of the PC, thus requires elevated permissions.
 .NOTES
-    Version:            1.0
+    Version:            1.1
     Author:             Scott E. Royalty
-    Last Modified Date: 7/7/2021
+    Last Modified Date: 7/31/2022
+.CHANGELOG
+    1.1
+        Removed storage checking stuff - This is for automation anyway, and not recording it.
+        Added the following functions for additional cleanup
+            Clear-RogueFolders - Used to clean up ghost folders from known packages
+            Clear-WindowsOld - Clears out the Windows.Old folder left behind by Feature Updates and Upgrades
+            Clear-EventLogs - Clears all the event logs
+            Clear-ErrorReports - Clears the primary Error Report folder
 #>
 
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
@@ -14,12 +22,48 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 }
 
 #------------------------------------------------------------------#
+#- Clear-RogueFolders                                              #
+#------------------------------------------------------------------#
+Function Clear-RogueFolders {
+    if (Test-Path C:\Config.Msi) {remove-item -Path C:\Config.Msi -force -recurse}
+    if (Test-Path C:\Dell) {remove-item -Path C:\Dell -force -recurse}
+	if (Test-Path c:\Intel) {remove-item -Path c:\Intel -force -recurse}
+	if (Test-Path c:\PerfLogs) {remove-item -Path c:\PerfLogs -force -recurse}
+    if (Test-Path $env:windir\memory.dmp) {remove-item $env:windir\memory.dmp -force}
+}
+
+#------------------------------------------------------------------#
+#- Clear-WindowsOld                                                #
+#------------------------------------------------------------------#
+Function Clear-WindowsOld {
+    If(Test-Path C:\Windows.old)
+    {
+        New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Previous Installations" -Name "StateFlags1221" -PropertyType DWORD  -Value 2 -Force | Out-Null
+        Start-Process -FilePath "cleanmgr" -ArgumentList /SAGERUN:1221 -Wait -WindowStyle Hidden
+    }
+}
+
+#------------------------------------------------------------------#
+#- Clear-EventLogs                                                 #
+#------------------------------------------------------------------#
+Function Clear-EventLogs {
+    wevtutil el | Foreach-Object {wevtutil cl "$_"}
+}
+
+#------------------------------------------------------------------#
+#- Clear-ErrorReports                                              #
+#------------------------------------------------------------------#
+Function Clear-ErrorReports {
+    if (Test-Path C:\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -Path C:\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -force -recurse}
+}
+
+#------------------------------------------------------------------#
 #- Clear-GlobalWindowsCache                                        #
 #------------------------------------------------------------------#
 Function Clear-GlobalWindowsCache {
     Clear-RecycleBin -DriveLetter C -Force -ErrorAction SilentlyContinue
     Remove-CacheFiles 'C:\Windows\Temp'
-    Remove-CacheFiles "C:\Windows\Prefetch"
+#    Remove-CacheFiles "C:\Windows\Prefetch"
     C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 255
     C:\Windows\System32\rundll32.exe InetCpl.cpl, ClearMyTracksByProcess 4351
 }
@@ -63,20 +107,6 @@ Function Stop-BrowserSessions {
    Stop-Process -Name 'iexplore*' -Force
    Stop-Process -Name 'msedge*' -Force
    Stop-Process -Name 'firefox*' -Force
-}
-
-#------------------------------------------------------------------#
-#- Get-StorageSize                                                 #
-#------------------------------------------------------------------#
-Function Get-StorageSize {
-    Get-WmiObject Win32_LogicalDisk |
-    Where-Object { $_.DriveType -eq "3" } |
-    Select-Object SystemName,
-        @{ Name = "Drive" ; Expression = { ( $_.DeviceID ) } },
-        @{ Name = "Size (GB)" ; Expression = {"{0:N1}" -f ( $_.Size / 1gb)}},
-        @{ Name = "FreeSpace (GB)" ; Expression = {"{0:N1}" -f ( $_.Freespace / 1gb ) } },
-        @{ Name = "PercentFree" ; Expression = {"{0:P1}" -f ( $_.FreeSpace / $_.Size ) } } |
-    Format-Table -AutoSize | Out-String
 }
 
 #------------------------------------------------------------------#
@@ -206,14 +236,9 @@ Function Clear-WaterfoxCacheFiles {
 #- MAIN                                                            #
 #------------------------------------------------------------------#
 
-# $StartTime = (Get-Date)
-
-# Get-StorageSize
-
 Clear-UserCacheFiles
 Clear-GlobalWindowsCache
-
-# Get-StorageSize
-
-# $EndTime = (Get-Date)
-# Write "Elapsed Time: $(($StartTime - $EndTime).totalseconds) seconds"
+Clear-RogueFolders
+Clear-WindowsOld
+Clear-EventLogs
+Clear-ErrorReports
