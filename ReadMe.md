@@ -14,7 +14,7 @@ To support this project, you can make a donation to the current maintainer:
 
 ### Paypal:
 
-[![Paypal](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/paypal_btn_donateCC_LG_1.gif)](https://paypal.me/SRoyalty?country.x=US&locale.x=en_US)
+[![Paypal](https://github.com/therealatreides/TechScripts/blob/main/ImageRepository/paypal_btn_donateCC_LG_1.gif)](https://www.paypal.com/donate/?hosted_button_id=E6BPVFVTQ6TKU)
 
 ### Cashapp: $MuadDibttv
 
