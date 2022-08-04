@@ -18,13 +18,15 @@ namespace SplashIt
         private string splashApp = string.Empty;
         private int splashWidth = 0;
         private int splashHeight = 0;
+        private bool splashPersistent = true;
 
-        public SplashForm(string app2Mon, string pageUrl, int swidth, int sheight)
+        public SplashForm(string app2Mon, string pageUrl, int swidth, int sheight, bool spersist)
         {
             splashApp = app2Mon;
             splashUrl = pageUrl;
             splashWidth = swidth;
             splashHeight = sheight;
+            splashPersistent = spersist;
             InitializeComponent();
         }
 
@@ -53,7 +55,8 @@ namespace SplashIt
             }
             else
             {
-                e.Cancel = true;
+                if (splashPersistent)
+                    e.Cancel = true;
             }
         }
 

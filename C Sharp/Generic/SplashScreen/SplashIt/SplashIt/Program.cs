@@ -12,6 +12,7 @@ namespace SplashIt
         private static string app2Mon = "kix32.exe";
         private static int width = 630;
         private static int height = 480;
+        private static bool persistent = true;
 
         /// <summary>
         /// The main entry point for the application.
@@ -34,10 +35,11 @@ namespace SplashIt
                 msgText += "<splash file>   : HTML based file to use as a loading/splash screen" + Environment.NewLine;
                 msgText += "<width>         : Width of the window" + Environment.NewLine;
                 msgText += "<height>        : Height of the window" + Environment.NewLine;
+                msgText += "<persistent>    : Optional - Add 0 to allow users to close it on their own" + Environment.NewLine;
                 msgText += Environment.NewLine;
                 msgText += "Examples:" + Environment.NewLine;
                 msgText += @"Z:\SplashIt.exe kix32.exe Z:\Splash.html 630 480" + Environment.NewLine;
-                msgText += "Z:\\SplashIt.exe kix32.exe \"Z:\\My Splashes\\Splash.html\" 630 480" + Environment.NewLine;
+                msgText += "Z:\\SplashIt.exe kix32.exe \"Z:\\My Splashes\\Splash.html\" 630 480 0" + Environment.NewLine;
 
                 MessageBox.Show(msgText);
                 Environment.Exit(0);
@@ -54,11 +56,15 @@ namespace SplashIt
                 app2Mon = args[1];
                 width = Convert.ToInt32(args[2]);
                 height = Convert.ToInt32(args[3]);
+                if (args.Length == 5)
+                {
+                    persistent = false;
+                }
             }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new SplashForm(pageURL, app2Mon, width, height));
+            Application.Run(new SplashForm(pageURL, app2Mon, width, height, persistent));
         }
     }
 }
