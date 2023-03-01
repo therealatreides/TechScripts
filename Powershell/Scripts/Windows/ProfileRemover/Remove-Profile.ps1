@@ -105,7 +105,7 @@ if ($logCheck -ge $Days) {
     # range is outside what we want, so we should remove the profile.
     Write-Host "Last logoff was greater than $Days days ago"
     if ($Cleanup -ne $false){
-        Get-CimInstance win32_userprofile -filter "localpath like 'C:\Users\%$User%'" | Remove-CimInstance
+        Get-CimInstance win32_userprofile -filter "localpath like '%$User%'" | Remove-CimInstance
     }
     exit 0
 } else {
