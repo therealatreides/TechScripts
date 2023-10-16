@@ -1,28 +1,29 @@
 <#
 .DESCRIPTION
-    This script will output all the rooms associated with a specific room list. Options for output are full
-    details or simple formatted.
+    This script will create a rooms list for your conference rooms in the cloud (not for On-Premise).
+	
 .NOTES
     Requires PowershellGet v2.x or higher - Install-Module -Name PowerShellGet -Repository PSGallery -Force -AllowClobber
     Requires ExchangeOnlineManagement Prerelease v2.05 or higher (so does not use Basic Auth) - Install-Module -Name ExchangeOnlineManagement -AllowPrerelease
 
     Version:            1.0
     Author:             Scott E. Royalty
-    Last Modified Date: 8/6/2022
+    Last Modified Date: 7/27/2022
 #>
-param( [Parameter(Mandatory=$true)] $WorkerEmail, [Parameter(Mandatory=$true)] $ListName, $OutputFormat="full")
+param( [Parameter(Mandatory=$true)] $WorkerEmail, [Parameter(Mandatory=$true)] $ListName, $MyOU="example.com/rooms")
 
 Import-Module ExchangeOnlineManagement
 
 Try {
   Connect-ExchangeOnline -UserPrincipalName $WorkerEmail
 
-  if ($OutputFormat -eq "simple")
+  if ($MyOU -eq "example.com/rooms")
   {
-    Get-DistributionGroupMember -Identity $ListName | Format-Table DisplayName,Identity
+    # No OU was passed, so this is set in the Exchange OU Default
+    New-DistributionGroup -Name "$ListName" -RoomList
   }
   else {
-    Get-DistributionGroupMember -Identity $ListName
+    New-DistributionGroup -Name "$ListName" -OrganizationalUnit "$MyOU" -RoomList
   }
 
   Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
