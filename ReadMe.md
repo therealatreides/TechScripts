@@ -4,11 +4,6 @@ This repository is used for all my public tech support related scripts.
 Let me know if you have any issues using them, as there is always space for improvement.
 
 
-## I am fat, I like food
-
-* [Blog](https://steamandstream.xyz)
-
-
 ## Donations
 To support this project, you can make a donation to the current maintainer:
 
