@@ -1,0 +1,8 @@
+Enabled,AppName,AppPath,AppFile,AppFlags
+0,7-Zip,C:\Applications\7-Zip\,install.bat,/i 7z2301-x64.msi /quiet /passive
+0,Acrobate Reader,C:\Applications\Adobe Acrobat Reader DC\,install.bat,AcroRdrDCx642300320284_MUI.exe -sfx_nu /sALL /msi EULA_ACCEPT=YES
+0,Chrome for Enterprise,C:\Applications\Chrome\,install.bat,/i googlechromestandaloneenterprise64.msi /quiet /passive
+0,Notepad++,C:\Applications\Notepadd++\,install.bat,npp.8.5.6.Installer.x64.exe /S /qn
+0,Dell Command Update,C:\Applications\Dell Command Update\,install.bat,DellCommandUpdateApp_Setup.exe /S /v/qn
+1,Dell Command Configure,C:\Applications\Dell Command Configure\,install.bat,/i Command_Configure.msi /quiet /qb
+0,Microsoft Office 2016,C:\Applications\Office2016\,InstallOffice.cmd,
