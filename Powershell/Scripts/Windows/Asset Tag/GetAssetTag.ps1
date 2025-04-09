@@ -3,9 +3,9 @@
     This script will pull, if available, the Asset Tag entry set in the BIOS (for example, from Dell motherboards)
 
 .NOTES
-    Version:            1.0
+    Version:            1.1
     Author:             Scott E. Royalty
-    Last Modified Date: 4/30/2022
+    Last Modified Date: 4/8/2025
 #>
 
 #------------------------------------------------------------------#
@@ -24,7 +24,7 @@ Function Get-AssetTag {
         }
     If (Select-String -Pattern "HP" -InputObject $manufacturer)
         {
-            return "Undefined"
+            return (Get-WmiObject -Class Cim_Chassis | Select-Object -Property SMBIOSAssetTag).SMBiosAssetTag
         }
 }
 
