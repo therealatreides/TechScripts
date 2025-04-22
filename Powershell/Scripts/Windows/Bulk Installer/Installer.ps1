@@ -11,11 +11,11 @@
     
     This requires elevated permissions usually unless the application is user specific.
 .NOTES
-    Version:            1.0
+    Version:            1.0a
     Author:             Scott E. Royalty
-    Last Modified Date: 6/1/2022
+    Last Modified Date: 3/11/2025
 #>
-param( [Parameter(Mandatory=$true)] $CSVFile, [Parameter(Mandatory=$true)] $WorkPath)
+param( [Parameter(Mandatory=$true)] $CSVFile, $WorkPath="C:\PCApplications")
 
 # Let's import the CSV that contains our application's details needing installed
 $applications = Import-CSV -path $CSVFile
