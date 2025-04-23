@@ -3,29 +3,37 @@
     This script will pull, if available, the Asset Tag entry set in the BIOS (for example, from Dell motherboards)
 
 .NOTES
-    Version:            1.0
+    Version:            2.0
     Author:             Scott E. Royalty
-    Last Modified Date: 4/30/2022
+    Last Modified Date: 4/23/2025
 #>
 
-#------------------------------------------------------------------#
-#- Get-AssetTag                                        #
-#------------------------------------------------------------------#
 Function Get-AssetTag {
-    $manufacturer = Get-WmiObject -Class win32_bios  | Select-Object -Property Manufacturer
+    # Get manufacturer information
+    $biosInfo = Get-WmiObject -Class win32_bios | Select-Object -ExpandProperty Manufacturer
+    if (-not $biosInfo) {
+        Write-Warning "Unable to retrieve BIOS manufacturer information."
+        return "Unknown"
+    }
 
-    If (Select-String -Pattern "Dell" -InputObject $manufacturer)
-        {
-            return (Get-WmiObject -Class Cim_Chassis | Select-Object -Property SMBIOSAssetTag).SMBiosAssetTag
+    # Get chassis information
+    $chassisInfo = Get-WmiObject -Class Cim_Chassis | Select-Object -ExpandProperty SMBIOSAssetTag
+
+    if (-not $chassisInfo) {
+        Write-Warning "Unable to retrieve chassis information."
+        return "Unknown"
+    }    
+
+    # Determine asset tag based on manufacturer
+    switch -Wildcard ($biosInfo) {
+        "*Dell*" { return $chassisInfo }
+        "*Surface*" { return "Undefined" }
+        "*HP*" { return $chassisInfo }
+        default { 
+            Write-Warning "Manufacturer not recognized: $biosInfo"
+            return "Unknown"
         }
-    If (Select-String -Pattern "Surface" -InputObject $manufacturer)
-        {
-            return "Undefined"
-        }
-    If (Select-String -Pattern "HP" -InputObject $manufacturer)
-        {
-            return "Undefined"
-        }
+    }
 }
 
 $TheAssetTag = Get-AssetTag
