@@ -6,7 +6,7 @@
 
     This requires elevated permissions.
 .NOTES
-    Version:            1.1
+    Version:            1.2
     Author:             Scott E. Royalty
     Last Modified Date: 7/7/2021
 #>
@@ -23,3 +23,5 @@ Remove-ItemProperty -Path "HKCU:\SOFTWARE\Classes\Local Settings\Software\Micros
 
 Write-Output "Restarting Explorer..."
 Stop-Process -Name 'explorer*' -Force
+Start-Sleep -Seconds 5
+Start-Process -FilePath "explorer.exe" -ArgumentList "C:\Windows\explorer.exe" -WorkingDirectory "C:\Windows\"
