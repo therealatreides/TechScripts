@@ -24,7 +24,7 @@ Skips the settings screen during first boot
 Skips all user interaction on first boot and logs into the auto created account
 Skips wirless configuration
 Logs into the user account on the first boot. Next reboot, it will prompt to update password
-There is a section commented out that will set the password to never expire. Uncomment
+Note: There is a section commented out that will set the password to never expire. Uncomment
     this if you don't want it to prompt to change on first reboot.
 
 ## Donations
