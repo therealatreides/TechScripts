@@ -25,6 +25,7 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 #- Clear-RogueFolders                                              #
 #------------------------------------------------------------------#
 Function Clear-RogueFolders {
+    Write-Host "Clearing Known Rogue Folders at C:\ ..."
     if (Test-Path C:\Config.Msi) {remove-item -Path C:\Config.Msi -force -recurse}
     if (Test-Path C:\Dell) {remove-item -Path C:\Dell -force -recurse}
 	if (Test-Path c:\Intel) {remove-item -Path c:\Intel -force -recurse}
@@ -33,9 +34,20 @@ Function Clear-RogueFolders {
 }
 
 #------------------------------------------------------------------#
+#- Clear-WindowsUpdateCache                                                #
+#------------------------------------------------------------------#
+function Clear-WindowsUpdateCache {
+    Write-Host "Clearing Windows Update cache..."
+    Stop-Service -Name wuauserv -Force -ErrorAction SilentlyContinue
+    Remove-Item "C:\Windows\SoftwareDistribution\Download\*" -Recurse -Force -ErrorAction SilentlyContinue
+    Start-Service -Name wuauserv -ErrorAction SilentlyContinue
+}
+
+#------------------------------------------------------------------#
 #- Clear-WindowsOld                                                #
 #------------------------------------------------------------------#
 Function Clear-WindowsOld {
+    Write-Host "Clearing Windows.Old folder..."
     If(Test-Path C:\Windows.old)
     {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Previous Installations" -Name "StateFlags1221" -PropertyType DWORD  -Value 2 -Force | Out-Null
@@ -47,6 +59,7 @@ Function Clear-WindowsOld {
 #- Clear-EventLogs                                                 #
 #------------------------------------------------------------------#
 Function Clear-EventLogs {
+    Write-Host "Clearing Event logs..."
     wevtutil el | Foreach-Object {wevtutil cl "$_"}
 }
 
@@ -54,6 +67,7 @@ Function Clear-EventLogs {
 #- Clear-ErrorReports                                              #
 #------------------------------------------------------------------#
 Function Clear-ErrorReports {
+    Write-Host "Clearing Error reports..."
     if (Test-Path C:\ProgramData\Microsoft\Windows\WER) {Get-ChildItem -Path C:\ProgramData\Microsoft\Windows\WER -Recurse | Remove-Item -force -recurse}
 }
 
@@ -61,6 +75,7 @@ Function Clear-ErrorReports {
 #- Clear-GlobalWindowsCache                                        #
 #------------------------------------------------------------------#
 Function Clear-GlobalWindowsCache {
+    Write-Host "Clearing global OS cache..."
     Clear-RecycleBin -DriveLetter C -Force -ErrorAction SilentlyContinue
     Remove-CacheFiles 'C:\Windows\Temp'
 #    Remove-CacheFiles "C:\Windows\Prefetch"
@@ -72,6 +87,7 @@ Function Clear-GlobalWindowsCache {
 #- Clear-UserCacheFiles                                            #
 #------------------------------------------------------------------#
 Function Clear-UserCacheFiles {
+    Write-Host "Clearing base browser cache..."
     Stop-BrowserSessions
     ForEach($localUser in (Get-ChildItem 'C:\users').Name)
     {
@@ -86,6 +102,7 @@ Function Clear-UserCacheFiles {
 #- Clear-WindowsUserCacheFiles                                     #
 #------------------------------------------------------------------#
 Function Clear-WindowsUserCacheFiles {
+    Write-Host "Clearing User cache..."
     param([string]$user=$env:USERNAME)
     Remove-CacheFiles "C:\Users\$user\AppData\Local\Temp"
     Remove-CacheFiles "C:\Users\$user\AppData\Local\Microsoft\Windows\WER"
@@ -239,6 +256,7 @@ Function Clear-WaterfoxCacheFiles {
 Clear-UserCacheFiles
 Clear-GlobalWindowsCache
 Clear-RogueFolders
+Clear-WindowsUpdateCache
 Clear-WindowsOld
 Clear-EventLogs
 Clear-ErrorReports

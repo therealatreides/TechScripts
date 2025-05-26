@@ -31,7 +31,7 @@ Function Test-ADUser {
     [parameter(Mandatory=$true)]
     [string]$ServerName
     )
-     Try {
+    Try {
        Get-ADUser -Identity $Username -Server $ServerName -ErrorAction Stop
        return $true
     } Catch {
