@@ -9,22 +9,46 @@
 .EXAMPLE
     Get-DistGroupOnPremise.ps1 -WorkerEmail user@company.com -ExportPath "C:\temp\export.csv"
 
-    Version:            1.0
+    Version:            1.1
     Author:             Scott E. Royalty
-    Last Modified Date: 4/28/2023
-#>
-param( [Parameter(Mandatory=$true)] $WorkerEmail, [Parameter(Mandatory=$true)] $ExportPath)
+    Last Modified Date: 6/06/2025
 
-Import-Module ExchangeOnlineManagement
+    Changes:
+        1.1 - Formatting, additional error handling for connection issues and improved output messages.
+        1.0 - Initial version.
+
+.PARAMETER WorkerEmail
+    The email address of the worker who will perform the operation. This is used to connect to Exchange Online.
+.PARAMETER ExportPath
+    The path where the output CSV file will be saved. This file will contain details of the distribution groups that are still On Premise and synced to the cloud.
+#>
+param(
+    [Parameter(Mandatory=$true)]
+    $WorkerEmail,
+    
+    [Parameter(Mandatory=$true)]
+    $ExportPath
+)
+
+if (-not (Get-Module -Name ExchangeOnlineManagement)) {
+  Import-Module ExchangeOnlineManagement
+}
 
 Try {
-  Connect-ExchangeOnline -UserPrincipalName $WorkerEmail
+  Connect-ExchangeOnline -UserPrincipalName $WorkerEmail -ErrorAction Stop
+}
+catch {
+  Write-Host "Failed to connect to Exchange Online. Please check the credentials or email address: $WorkerEmail" -ForegroundColor Red
+  Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
+  Exit
+}
 
+Try {
   Get-DistributionGroup | Where {$_.IsDirSynced -eq $true} | Select GroupType, Name, DisplayName, Alias, Description, HiddenFromAddressListsEnabled, RequireSenderAuthenticationEnabled, EmailAddresses, WindowsEmailAddress, RecipientType, PrimarySmtpAddress | Export-Csv "$ExportPath" -NoTypeInformation
 
   Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
 }
 catch {
   Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue
-  Write-host "Error occured: $_" -f Red
+  Write-host "Error occured: $_" -ForegroundColor Red
 }
