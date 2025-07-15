@@ -17,8 +17,14 @@
 #>
 
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs
-    Exit
+    try {
+        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs -ErrorAction Stop
+        Exit
+    } catch {
+        Write-Error "Failed to elevate privileges: $($_.Exception.Message)"
+        Write-Host "Please run this script as an administrator" -ForegroundColor Red
+        exit 1
+    }
 }
 
 #------------------------------------------------------------------#
@@ -120,10 +126,21 @@ Function Clear-WindowsUserCacheFiles {
 #- Stop-BrowserSessions                                            #
 #------------------------------------------------------------------#
 Function Stop-BrowserSessions {
-   Stop-Process -Name 'chrome*' -Force
-   Stop-Process -Name 'iexplore*' -Force
-   Stop-Process -Name 'msedge*' -Force
-   Stop-Process -Name 'firefox*' -Force
+    Write-Host "Stopping browser sessions..." -ForegroundColor Yellow
+    $browsers = @('chrome', 'iexplore', 'msedge', 'firefox')
+    
+    foreach ($browser in $browsers) {
+        try {
+            $processes = Get-Process -Name "$browser*" -ErrorAction SilentlyContinue
+            if ($processes) {
+                Write-Host "Stopping $browser processes..." -ForegroundColor Yellow
+                Stop-Process -Name "$browser*" -Force -ErrorAction Stop
+                Write-Host "Successfully stopped $browser processes" -ForegroundColor Green
+            }
+        } catch {
+            Write-Warning "Could not stop $browser processes: $($_.Exception.Message)"
+        }
+    }
 }
 
 #------------------------------------------------------------------#
@@ -253,10 +270,89 @@ Function Clear-WaterfoxCacheFiles {
 #- MAIN                                                            #
 #------------------------------------------------------------------#
 
-Clear-UserCacheFiles
-Clear-GlobalWindowsCache
-Clear-RogueFolders
-Clear-WindowsUpdateCache
-Clear-WindowsOld
-Clear-EventLogs
-Clear-ErrorReports
+Write-Host "Starting comprehensive cache cleanup..." -ForegroundColor Yellow
+Write-Host "This process will clean:" -ForegroundColor Cyan
+Write-Host "- User cache files (all users)" -ForegroundColor Cyan
+Write-Host "- Global Windows cache" -ForegroundColor Cyan
+Write-Host "- Rogue folders" -ForegroundColor Cyan
+Write-Host "- Windows Update cache" -ForegroundColor Cyan
+Write-Host "- Windows.old folder" -ForegroundColor Cyan
+Write-Host "- Event logs" -ForegroundColor Cyan
+Write-Host "- Error reports" -ForegroundColor Cyan
+Write-Host ""
+
+$totalErrors = 0
+
+try {
+    Write-Host "Phase 1: Clearing user cache files..." -ForegroundColor Yellow
+    Clear-UserCacheFiles
+    Write-Host "User cache files cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "User cache cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+try {
+    Write-Host "Phase 2: Clearing global Windows cache..." -ForegroundColor Yellow
+    Clear-GlobalWindowsCache
+    Write-Host "Global Windows cache cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "Global Windows cache cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+try {
+    Write-Host "Phase 3: Clearing rogue folders..." -ForegroundColor Yellow
+    Clear-RogueFolders
+    Write-Host "Rogue folders cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "Rogue folders cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+try {
+    Write-Host "Phase 4: Clearing Windows Update cache..." -ForegroundColor Yellow
+    Clear-WindowsUpdateCache
+    Write-Host "Windows Update cache cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "Windows Update cache cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+try {
+    Write-Host "Phase 5: Clearing Windows.old folder..." -ForegroundColor Yellow
+    Clear-WindowsOld
+    Write-Host "Windows.old folder cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "Windows.old folder cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+try {
+    Write-Host "Phase 6: Clearing event logs..." -ForegroundColor Yellow
+    Clear-EventLogs
+    Write-Host "Event logs cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "Event logs cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+try {
+    Write-Host "Phase 7: Clearing error reports..." -ForegroundColor Yellow
+    Clear-ErrorReports
+    Write-Host "Error reports cleanup completed" -ForegroundColor Green
+} catch {
+    Write-Error "Error reports cleanup failed: $($_.Exception.Message)"
+    $totalErrors++
+}
+
+Write-Host ""
+Write-Host "Cache cleanup summary:" -ForegroundColor Cyan
+if ($totalErrors -eq 0) {
+    Write-Host "All cleanup operations completed successfully" -ForegroundColor Green
+} else {
+    Write-Host "Cleanup completed with $totalErrors errors" -ForegroundColor Yellow
+    Write-Host "Some operations may require manual intervention" -ForegroundColor Yellow
+}
+
+Write-Host "Cache cleanup process finished" -ForegroundColor Green
