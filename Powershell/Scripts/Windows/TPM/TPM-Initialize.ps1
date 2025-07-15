@@ -17,10 +17,32 @@
 
 
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs
-    Exit
+    try {
+        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs -ErrorAction Stop
+        Exit
+    } catch {
+        Write-Error "Failed to elevate privileges: $($_.Exception.Message)"
+        Write-Host "Please run this script as an administrator" -ForegroundColor Red
+        exit 1
+    }
 }
 
-Initialize-Tpm
-Start-Sleep -Seconds 20
-Restart-Computer -Force
+try {
+    Write-Host "Initializing TPM..." -ForegroundColor Yellow
+    Initialize-Tpm -ErrorAction Stop
+    Write-Host "TPM initialization completed successfully" -ForegroundColor Green
+    
+    Write-Host "Waiting 20 seconds before restart..." -ForegroundColor Yellow
+    Start-Sleep -Seconds 20
+    
+    Write-Host "Restarting computer..." -ForegroundColor Yellow
+    Restart-Computer -Force -ErrorAction Stop
+} catch {
+    Write-Error "TPM initialization failed: $($_.Exception.Message)"
+    Write-Host "Please check TPM status in BIOS/UEFI settings" -ForegroundColor Red
+    Write-Host "Common issues:" -ForegroundColor Yellow
+    Write-Host "- TPM is disabled in BIOS" -ForegroundColor Yellow
+    Write-Host "- TPM is already initialized" -ForegroundColor Yellow
+    Write-Host "- Insufficient privileges" -ForegroundColor Yellow
+    exit 1
+}
