@@ -11,11 +11,22 @@
 #>
 param( $MountPoint="C:" )
 
-$BitLockerStatus = (Get-BitLockerVolume -MountPoint "$MountPoint" | Select-Object ProtectionStatus)
-
-if ($BitLockerStatus = "On") {
-    Write-Host "BitLocker Status:$BitLockerStatus - Encryption will be suspended for one reboot."
-    Suspend-BitLocker -MountPoint "$MountPoint" -RebootCount 1
-} else {
-    Write-Host "BitLocker Status: $BitLockerStatus"
+try {
+    Write-Host "Checking BitLocker status for mount point: $MountPoint" -ForegroundColor Yellow
+    $BitLockerStatus = Get-BitLockerVolume -MountPoint "$MountPoint" -ErrorAction Stop
+    
+    if ($BitLockerStatus.ProtectionStatus -eq "On") {
+        Write-Host "BitLocker Status: On - Encryption will be suspended for one reboot." -ForegroundColor Yellow
+        Suspend-BitLocker -MountPoint "$MountPoint" -RebootCount 1 -ErrorAction Stop
+        Write-Host "BitLocker successfully suspended for one reboot" -ForegroundColor Green
+    } else {
+        Write-Host "BitLocker Status: $($BitLockerStatus.ProtectionStatus) - No action needed" -ForegroundColor Green
+    }
+} catch {
+    Write-Error "BitLocker operation failed: $($_.Exception.Message)"
+    Write-Host "Common issues:" -ForegroundColor Yellow
+    Write-Host "- Invalid mount point specified" -ForegroundColor Yellow
+    Write-Host "- BitLocker is not enabled on this volume" -ForegroundColor Yellow
+    Write-Host "- Insufficient privileges (run as administrator)" -ForegroundColor Yellow
+    exit 1
 }
