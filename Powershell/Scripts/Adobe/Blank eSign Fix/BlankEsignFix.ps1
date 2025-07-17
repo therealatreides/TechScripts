@@ -12,10 +12,15 @@
         1.0 - Initial release
 #>
 
-
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs
-    Exit
+Try {
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+        Start-Process powershell.exe "-ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs
+        Exit
+    }
+}
+Catch {
+    Write-Error "Failed to restart script as administrator: $_"
+    Exit 1
 }
 
 #------------------------------------------------------------------#
@@ -26,8 +31,13 @@ Function Set-BlankESign {
     if ($acroProcesses) {
         $acroProcesses | ForEach-Object {
             Write-Output "Stopping process: $($_.Name) with ID: $($_.Id)"
-            Stop-Process -Id $_.Id -Force
-            Start-Sleep -Milliseconds 1000
+            Try {
+                Stop-Process -Id $_.Id -Force -ErrorAction Stop
+                Start-Sleep -Milliseconds 1000
+            }
+            Catch {
+                Write-Warning "Failed to stop process ID $($_.Id): $_"
+            }
         }
     }
 

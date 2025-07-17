@@ -12,23 +12,38 @@
         1.0 - Initial release
 #>
 
-
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process powershell.exe "-ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs
-    Exit
+Try {
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+        Start-Process powershell.exe "-ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -Verb RunAs
+        Exit
+    }
+}
+Catch {
+    Write-Error "Failed to restart script as administrator: $_"
+    Exit 1
 }
 
 #------------------------------------------------------------------#
 #- Set-BlankSaveAs                                                 #
 #------------------------------------------------------------------#
 Function Set-BlankSaveAs {
-    $acroProcesses = Get-Process -Name AcroRd32 -ErrorAction SilentlyContinue
-    if ($acroProcesses) {
-        $acroProcesses | ForEach-Object {
-            Write-Output "Stopping process: $($_.Name) with ID: $($_.Id)"
-            Stop-Process -Id $_.Id -Force
-            Start-Sleep -Milliseconds 1000
+    Try {
+        $acroProcesses = Get-Process -Name AcroRd32 -ErrorAction SilentlyContinue
+        if ($acroProcesses) {
+            $acroProcesses | ForEach-Object {
+                Try {
+                    Write-Output "Stopping process: $($_.Name) with ID: $($_.Id)"
+                    Stop-Process -Id $_.Id -Force
+                    Start-Sleep -Milliseconds 1000
+                }
+                Catch {
+                    Write-Warning "Failed to stop process $($_.Name) with ID: $($_.Id): $_"
+                }
+            }
         }
+    }
+    Catch {
+        Write-Warning "Error retrieving Adobe Reader processes: $_"
     }
     Set-ItemProperty -Path 'HKCU:\Software\Adobe\Acrobat Reader\DC\AVGeneral' -Name bToggleCustomSaveExperience -Value 1 -Force
 }

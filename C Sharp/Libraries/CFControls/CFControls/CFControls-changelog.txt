@@ -1,0 +1,43 @@
+02-24-2024 Scott
+	Changed:	Updated for VS 2022 and set target framework to .NET 4.8
+
+04-01-2014 Scott
+	  Added:    Support for new options with SATextBox in code and Property Grid in VS IDE:
+	                Trim Whitespace (TrimWhitespace):
+					    True (default)
+						False
+					Type of Textbox (TypeOfTextbox):
+					    Letters Only
+						Numbers Only
+						All (default)
+					No of Decimals (NoOfDecimals):
+						Integer - Number of Decimals for Numbers Only type of textbox. Default is 0.
+					Allow Spaces (AllowSpaces):
+						True (default)
+						False
+					Allow Negatives (AllowNegatives):
+						True
+						False (default)
+
+08-28-2013 Scott
+    Cleanup:	Code cleanup performed.
+    Changed:	"Status Update" in Splash screen default label changed to "Loading...."
+
+07-07-2013 Scott
+    Removed:    Unneeded items in the USING headers.
+
+06-26-2013 Scott
+    Changed:    Splash screen now will load image at runtime from DLLPAth\Data\logo.png.
+    Changed:    Splash screen now contains black border and plain white image for default.
+    Changed:    Splash screen Description function added for invoke to change description.
+      Added:    Multi-Threaded Forms.SplashScreen Form Control.
+
+06-21-2013 Scott
+      Added:    Loading Circle animated controls.
+
+06-04-2013 Scott
+      Added:    Serializable TreeView Control.
+
+06-03-2013 Scott
+      Added:    Initial Build.
+      Added:    SATextBox Class. Overrides TextBox control. Added ability to use CTRL+A to select all and runs Trim() when leaving event triggered.
